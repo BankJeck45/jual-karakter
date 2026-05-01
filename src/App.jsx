@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { User, Image as ImageIcon, Shirt, Scissors, Wand2, Loader2, Download, Maximize2, X, Sun, Camera, UploadCloud, MapPin, Activity } from 'lucide-react';
+import { User, Image as ImageIcon, Shirt, Scissors, Wand2, Loader2, Download, Maximize2, X, Sun, Camera, UploadCloud, MapPin, Activity, Menu } from 'lucide-react';
 
 export default function App() {
   // --- STATE UMUM ---
   const [activeTab, setActiveTab] = useState('create'); 
   const [previewImage, setPreviewImage] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // --- STATE TAB 1: BUAT KARAKTER ---
   const [formData, setFormData] = useState({
@@ -246,8 +247,16 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* MOBILE OVERLAY */}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+      
+      {/* HAMBURGER */}
+      <button className="hamburger" onClick={() => setSidebarOpen(true)}>
+        <Menu size={24} />
+      </button>
+
       {/* SIDEBAR */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <Wand2 size={28} className="sidebar-logo" />
           <h1 className="sidebar-title">Jual Karakter</h1>
@@ -257,14 +266,14 @@ export default function App() {
         <nav className="sidebar-nav">
           <button 
             className={`nav-btn ${activeTab === 'create' ? 'active' : ''}`}
-            onClick={() => setActiveTab('create')}
+            onClick={() => { setActiveTab('create'); setSidebarOpen(false); }}
           >
             <User size={20} />
             <span>Buat Karakter</span>
           </button>
           <button 
             className={`nav-btn ${activeTab === 'activity' ? 'active' : ''}`}
-            onClick={() => setActiveTab('activity')}
+            onClick={() => { setActiveTab('activity'); setSidebarOpen(false); }}
           >
             <Activity size={20} />
             <span>Studio Aktivitas</span>
