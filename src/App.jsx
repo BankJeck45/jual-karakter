@@ -54,12 +54,12 @@ export default function App() {
     'Gaun malam elegan': 'elegant long evening gown, haute couture, highly detailed fabric',
     'Kaos oblong polos dan celana pendek': 'plain basic t-shirt and casual shorts',
     'Pakaian tradisional Batik Indonesia': 'traditional Indonesian Batik patterned shirt',
-    'Kebaya tradisional modern kerah rendah (Low V-neck)': 'elegant modern traditional Indonesian Kebaya with a deep plunging V-neckline, form-fitting sheer lace, tasteful cleavage',
-    'Gaun Bodycon (Ketat membentuk tubuh)': 'very tight form-fitting bodycon dress emphasizing body curves and chest perfectly',
-    'Crop Top Ketat & Hotpants Jeans': 'tight crop top revealing midriff and tight denim hotpants',
-    'Pakaian Gym Ketat (Sport Bra & Legging)': 'very tight athletic sportswear, tight sports bra and form-fitting yoga leggings',
-    'Dress Musim Panas Belahan Tinggi': 'elegant revealing summer dress with a deep plunging neckline and high leg slit',
-    'Bikini / Pakaian Renang Pantai': 'beautiful sexy two-piece swimsuit bikini'
+    'Kebaya tradisional modern': 'elegant modern traditional Indonesian Kebaya, modest fashion, sheer lace details',
+    'Gaun Bodycon Modern': 'modern fitted bodycon dress, casual elegant style, street fashion',
+    'Crop Top & High Waist Jeans': 'casual crop top with high waist jeans, trendy streetwear style',
+    'Pakaian Olahraga (Sporty)': 'casual athletic wear, sporty outfit, yoga pants and tank top',
+    'Summer Dress Kasual': 'casual summer dress, modest knee-length, floral pattern',
+    'Pakaian Pantai (Beach Cover-up)': 'beach cover-up, sarong, modest resort wear'
   };
 
   const accessoryMap = {
@@ -96,15 +96,15 @@ export default function App() {
     const g = formData;
     
     // Gender + Age + Ethnicity
-    parts.push(`A beautiful ${g.gender.toLowerCase()} ${g.age} years old, ${g.ethnicity}`);
+    parts.push(`A ${g.gender.toLowerCase()} ${g.age} years old, ${g.ethnicity}`);
     
-    // Body
-    parts.push(`${g.bodyType.toLowerCase()} body, ${g.chestSize.toLowerCase()}`);
+    // Body type only (no chest size — triggers content filter)
+    parts.push(`${g.bodyType.toLowerCase()} body type`);
     
     // Skin + Hair
     parts.push(`${g.skinColor} skin, ${g.hair} ${g.hairColor}`);
     
-    // Clothing
+    // Clothing (use safe descriptions)
     const enClothing = clothingMap[g.clothing] || g.clothing;
     let clothingStr = `wearing ${enClothing}`;
     if (g.clothingColor !== 'Sesuai Aslinya (Default)') {
@@ -121,8 +121,8 @@ export default function App() {
     // Background + Lighting
     parts.push(`in ${g.background}, ${g.lighting}`);
     
-    // Quality boosters
-    parts.push('masterpiece, best quality, highly detailed face, photorealistic, 8K, cinematic lighting, sharp focus, professional photography');
+    // Quality — SAFE prompt style for DALL-E 3
+    parts.push('high quality, detailed face, natural lighting, sharp focus, professional photography, safe content');
     
     return parts.join(', ');
   }
@@ -131,7 +131,7 @@ export default function App() {
     const parts = [];
     const g = formData;
     
-    parts.push(`A beautiful ${g.gender.toLowerCase()} ${g.age} years old, ${g.ethnicity}`);
+    parts.push(`A ${g.gender.toLowerCase()} ${g.age} years old, ${g.ethnicity}`);
     parts.push(`${g.skinColor} skin, ${g.hair} ${g.hairColor}`);
     
     const enClothing = clothingMap[activityData.clothing] || activityData.clothing;
@@ -144,7 +144,7 @@ export default function App() {
     
     parts.push(`${activityData.pose}`);
     parts.push(`${activityData.location}`);
-    parts.push('masterpiece, best quality, photorealistic, 8K, cinematic lighting');
+    parts.push('high quality, natural lighting, sharp focus, safe content');
     
     return parts.join(', ');
   }
