@@ -92,70 +92,76 @@ export default function App() {
   }
 
   function buildEnglishPrompt() {
-    const parts = [];
+    // PHOTOGRAPHIC PROMPT — optimized for DALL-E 3 natural style
+    // Keywords that trigger photorealism: "photograph", "real human", "slightly imperfect skin", "ordinary camera"
     const g = formData;
+    const gender = g.gender.toLowerCase();
     
-    // Start with photography style — real person, not illustration
-    parts.push(`A casual candid photograph of a real ${g.gender.toLowerCase()}, ${g.age} years old, ${g.ethnicity}`);
+    let prompt = `Photograph of a real ${gender} in their ${g.age}s, ${g.ethnicity}`;
     
-    // Body — natural description
-    parts.push(`${g.bodyType.toLowerCase()} build`);
+    // Body description — natural
+    prompt += `, ${g.bodyType.toLowerCase()} build`;
     
-    // Skin + Hair — natural color description
-    parts.push(`${g.skinColor} skin complexion, ${g.hair} ${g.hairColor}`);
+    // Skin + Hair
+    prompt += `, ${g.skinColor} skin, ${g.hair} ${g.hairColor}`;
     
-    // Clothing — natural, everyday description
+    // Clothing (using safe descriptions from clothingMap)
     const enClothing = clothingMap[g.clothing] || g.clothing;
-    let clothingStr = `dressed in ${enClothing}`;
+    prompt += `, wearing ${enClothing}`;
     if (g.clothingColor !== 'Sesuai Aslinya (Default)') {
-      clothingStr += `, ${g.clothingColor} color`;
+      prompt += ` in ${g.clothingColor}`;
     }
-    parts.push(clothingStr);
     
     // Accessories
     if (g.accessories.length > 0) {
       const enAcc = g.accessories.map(a => accessoryMap[a] || a).join(', ');
-      parts.push(`wearing ${enAcc}`);
+      prompt += `, accessorized with ${enAcc}`;
     }
     
-    // Background + Lighting — realistic environment
-    parts.push(`standing ${g.background}`);
+    // Background
+    prompt += `, ${g.background}`;
+    
+    // Lighting — mapped to natural descriptions
     if (g.lighting.includes('Studio')) {
-      parts.push('natural window lighting, soft shadows, realistic skin texture');
+      prompt += ', soft natural window light, diffused shadows';
     } else if (g.lighting.includes('Golden')) {
-      parts.push('warm golden hour sunlight, soft glow on skin, natural sun rays');
+      prompt += ', warm golden hour sunlight, soft glow';
     } else if (g.lighting.includes('Neon')) {
-      parts.push('neon ambient lighting, colorful reflections, night atmosphere');
+      prompt += ', colorful neon ambient light, night atmosphere';
+    } else if (g.lighting.includes('Silau')) {
+      prompt += ', bright natural sunlight, sharp shadows';
     } else {
-      parts.push(`${g.lighting}, realistic skin texture, natural look`);
+      prompt += `, ${g.lighting}`;
     }
     
-    // Quality — PHOTOGRAPHIC keywords for DALL-E 3
-    parts.push('shot on smartphone, real person photography, natural facial features, realistic skin pores, authentic Indonesian look,真人,真實照片');
+    // PHOTOREALISM TRIGGERS — these are critical for real-looking results
+    prompt += ', candid snapshot style, slightly imperfect skin, realistic facial features, natural expression';
+    prompt += ', authentic looking real person, not a model, not CGI, not an illustration';
+    prompt += ', ordinary everyday look, taken with a standard digital camera, casual unposed';
     
-    return parts.join(', ');
+    return prompt;
   }
 
   function buildActivityPrompt() {
-    const parts = [];
     const g = formData;
+    const gender = g.gender.toLowerCase();
     
-    parts.push(`A casual candid photograph of a real ${g.gender.toLowerCase()}, ${g.age} years old, ${g.ethnicity}`);
-    parts.push(`${g.skinColor} skin, ${g.hair} ${g.hairColor}`);
+    let prompt = `Photograph of a real ${gender} in their ${g.age}s, ${g.ethnicity}`;
+    prompt += `, ${g.skinColor} skin, ${g.hair} ${g.hairColor}`;
     
     const enClothing = clothingMap[activityData.clothing] || activityData.clothing;
-    parts.push(`wearing ${enClothing}`);
+    prompt += `, wearing ${enClothing}`;
     
     if (g.accessories.length > 0) {
       const enAcc = g.accessories.map(a => accessoryMap[a] || a).join(', ');
-      parts.push(`with ${enAcc}`);
+      prompt += `, accessorized with ${enAcc}`;
     }
     
-    parts.push(`${activityData.pose}`);
-    parts.push(`${activityData.location}`);
-    parts.push('realistic photography, authentic look, natural expression, shot on smartphone,真人');
+    prompt += `, ${activityData.pose}`;
+    prompt += `, ${activityData.location}`;
+    prompt += ', candid snapshot, slightly imperfect skin, realistic photo, authentic person, not CGI';
     
-    return parts.join(', ');
+    return prompt;
   }
 
   function handleImageUpload(e) {
