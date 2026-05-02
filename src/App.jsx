@@ -95,34 +95,43 @@ export default function App() {
     const parts = [];
     const g = formData;
     
-    // Gender + Age + Ethnicity
-    parts.push(`A ${g.gender.toLowerCase()} ${g.age} years old, ${g.ethnicity}`);
+    // Start with photography style — real person, not illustration
+    parts.push(`A casual candid photograph of a real ${g.gender.toLowerCase()}, ${g.age} years old, ${g.ethnicity}`);
     
-    // Body type only (no chest size — triggers content filter)
-    parts.push(`${g.bodyType.toLowerCase()} body type`);
+    // Body — natural description
+    parts.push(`${g.bodyType.toLowerCase()} build`);
     
-    // Skin + Hair
-    parts.push(`${g.skinColor} skin, ${g.hair} ${g.hairColor}`);
+    // Skin + Hair — natural color description
+    parts.push(`${g.skinColor} skin complexion, ${g.hair} ${g.hairColor}`);
     
-    // Clothing (use safe descriptions)
+    // Clothing — natural, everyday description
     const enClothing = clothingMap[g.clothing] || g.clothing;
-    let clothingStr = `wearing ${enClothing}`;
+    let clothingStr = `dressed in ${enClothing}`;
     if (g.clothingColor !== 'Sesuai Aslinya (Default)') {
-      clothingStr += `, color: ${g.clothingColor}`;
+      clothingStr += `, ${g.clothingColor} color`;
     }
     parts.push(clothingStr);
     
     // Accessories
     if (g.accessories.length > 0) {
       const enAcc = g.accessories.map(a => accessoryMap[a] || a).join(', ');
-      parts.push(`with accessories: ${enAcc}`);
+      parts.push(`wearing ${enAcc}`);
     }
     
-    // Background + Lighting
-    parts.push(`in ${g.background}, ${g.lighting}`);
+    // Background + Lighting — realistic environment
+    parts.push(`standing ${g.background}`);
+    if (g.lighting.includes('Studio')) {
+      parts.push('natural window lighting, soft shadows, realistic skin texture');
+    } else if (g.lighting.includes('Golden')) {
+      parts.push('warm golden hour sunlight, soft glow on skin, natural sun rays');
+    } else if (g.lighting.includes('Neon')) {
+      parts.push('neon ambient lighting, colorful reflections, night atmosphere');
+    } else {
+      parts.push(`${g.lighting}, realistic skin texture, natural look`);
+    }
     
-    // Quality — SAFE prompt style for DALL-E 3
-    parts.push('high quality, detailed face, natural lighting, sharp focus, professional photography, safe content');
+    // Quality — PHOTOGRAPHIC keywords for DALL-E 3
+    parts.push('shot on smartphone, real person photography, natural facial features, realistic skin pores, authentic Indonesian look,真人,真實照片');
     
     return parts.join(', ');
   }
@@ -131,7 +140,7 @@ export default function App() {
     const parts = [];
     const g = formData;
     
-    parts.push(`A ${g.gender.toLowerCase()} ${g.age} years old, ${g.ethnicity}`);
+    parts.push(`A casual candid photograph of a real ${g.gender.toLowerCase()}, ${g.age} years old, ${g.ethnicity}`);
     parts.push(`${g.skinColor} skin, ${g.hair} ${g.hairColor}`);
     
     const enClothing = clothingMap[activityData.clothing] || activityData.clothing;
@@ -139,12 +148,12 @@ export default function App() {
     
     if (g.accessories.length > 0) {
       const enAcc = g.accessories.map(a => accessoryMap[a] || a).join(', ');
-      parts.push(`with accessories: ${enAcc}`);
+      parts.push(`with ${enAcc}`);
     }
     
     parts.push(`${activityData.pose}`);
     parts.push(`${activityData.location}`);
-    parts.push('high quality, natural lighting, sharp focus, safe content');
+    parts.push('realistic photography, authentic look, natural expression, shot on smartphone,真人');
     
     return parts.join(', ');
   }
